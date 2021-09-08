@@ -1,70 +1,96 @@
-import React, {Component} from 'react';
 import './App.css';
+import { Component} from 'react';
 
-class Total extends React.Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numberA: "",
-      numberB: "",
-      total: "", 
-      validation: true,  
+      numberA: 0,
+      numberB: 0,
+      messageCheckAddItem: "",
       listItems: [
-        { itemId: 1, fullName: "Maya", gender: "Female" },
-        { itemId: 2, fullName: "Join", gender: "Male" },
-        { itemId: 3, fullName: "Rika", gender: "Female" }
-      ]
-    };
+        {
+          key: 1, check: false, title: "Adam", completed: true
+        },
+        { 
+          key: 2, check: false, title: "Ricky", completed: false
+        },
+        {
+          key: 3, check: false, title: "Maya", completed: false
+        },
+        {
+          key: 4, check: false, title: "Join", completed: false
+        },
+        {
+          key: 5, check: false, title: "Lion", completed: false
+        },
+      ],
+      newItem: ""
+    }
   }
 
-  summationInput() {
-    this.setState( (total, props) => {
-      let summationInput = Number(this.state.numberA) + Number(this.state.numberB);
-      if (isNaN(summationInput)) {
-        return {validation: false};
-      } 
-      return {
-        total: summationInput
-      };
-    });
-
+  updateNewTextValue = (event) => {
+    this.setState({ newItem: event.target.value });
+  }
+  updateNumberA = (event) => {
+    this.setState({ numberA: event.target.value });
+  }
+  updateNumberB = (event) => {
+    this.setState({ numberB: event.target.value });
+  }
+  createNewItem = () => {
+    if (!this.state.listItems.find(item => item.title === this.state.newItem)) {
+      this.setState({
+        listItems: [...this.state.listItems,
+        { title: this.state.newItem, done: false }],
+        newItem: ""
+      });
+      this.setState({
+        messageCheckAddItem: "",
+      });
+    } else {
+      this.setState({
+        messageCheckAddItem: "Please re-enter input ",
+      });
+    }
   }
 
   render() {
-    // Array of <li>
-    var listItems = this.state.listItems.map(e => (
-      <li key={e.itemId} >Name : {e.fullName} - Gender : {e.gender}</li>
-    ));
-
     return (
-      <div>
-        <h1>Hello!</h1>
-        <div className='box'>
-          <div className="message"> {this.state.validation === false ? "Please input number" : "" }</div>
-          <input
-            type="text"
-            value={this.state.numberA}
-            onChange={(event) =>this.setState({numberA: event.target.value})}
-          />
-          <input
-            type="text"
-            value={this.state.numberB} 
-            onChange={(event) => this.setState({numberB: event.target.value})}
-          />
-          <button onClick={this.summationInput.bind(this)}>Summation</button>
-          <div className="total">Total: {this.state.total}</div>
-        </div>
-        <hr className="new3"></hr>
-        <div>
-          <div className="title">List items</div>
-          <ul className="list">
-            {listItems}
-          </ul>
-        </div>
-      </div>
+      <><div className="App">
+        <h1>Hello</h1>
+        <input
+          className='input-number'
+          type='text'
+          value={this.state.numberA}
+          onChange={this.updateNumberA} />
+        <input
+          className='input-number'
+          type='text'
+          value={this.state.numberB}
+          onChange={this.updateNumberB} />
+        <div>Total: {Number(this.state.numberA) + Number(this.state.numberB)}</div>
 
+
+      </div><div className="list-items">
+          <h2>TodoList</h2>
+          <div>
+            <input
+              value={this.state.newItem}
+              onChange={this.updateNewTextValue} />
+            <button className="btn "
+              onClick={this.createNewItem}>Add Item</button>
+            <p className="message">{this.state.messageCheckAddItem}</p>
+          </div>
+          <ul>
+            {this.state.listItems.map((item, index) => {
+              return <li key={`todo-${index}`} className={item.completed ? "item completed" : "item"}>
+                <p>{ item.title } - { item.completed ? "Done" : "Not done" }</p>
+              </li>;
+            })}
+          </ul>
+          
+        </div></>
     );
   }
 }
-
-export default Total;
