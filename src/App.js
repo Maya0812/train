@@ -10,19 +10,19 @@ export default class App extends Component {
       messageCheckAddItem: "",
       listItems: [
         {
-          key: 1, check: false, title: "Adam", completed: true
+          key: 1, title: "Adam", completed: true
         },
         { 
-          key: 2, check: false, title: "Ricky", completed: false
+          key: 2, title: "Ricky", completed: false
         },
         {
-          key: 3, check: false, title: "Maya", completed: false
+          key: 3, title: "Maya", completed: false
         },
         {
-          key: 4, check: false, title: "Join", completed: false
+          key: 4, title: "Join", completed: false
         },
         {
-          key: 5, check: false, title: "Lion", completed: false
+          key: 5, title: "Lion", completed: false
         },
       ],
       newItem: ""
@@ -38,7 +38,8 @@ export default class App extends Component {
   updateNumberB = (event) => {
     this.setState({ numberB: event.target.value });
   }
-  createNewItem = () => {
+  createNewItem = (e) => {
+    e.preventDefault();
     if (!this.state.listItems.find(item => item.title === this.state.newItem)) {
       this.setState({
         listItems: [...this.state.listItems,
@@ -54,6 +55,14 @@ export default class App extends Component {
       });
     }
   }
+
+  onChangeBox = item => {
+    this.setState(({ listItems }) => ({
+      listItems: listItems.map(el =>
+        el.key === item.key ? { ...el, completed: !el.completed } : el
+      )
+    }));
+  };
 
   render() {
     return (
@@ -74,21 +83,22 @@ export default class App extends Component {
 
       </div><div className="list-items">
           <h2>TodoList</h2>
-          <div>
+          <form>
             <input
               value={this.state.newItem}
               onChange={this.updateNewTextValue} />
             <button className="btn "
               onClick={this.createNewItem}>Add Item</button>
             <p className="message">{this.state.messageCheckAddItem}</p>
-          </div>
-          <ul>
+          </form>
+          <div>
             {this.state.listItems.map((item, index) => {
-              return <li key={`todo-${index}`} className={item.completed ? "item completed" : "item"}>
-                <p>{ item.title } - { item.completed ? "Done" : "Not done" }</p>
-              </li>;
+              return <div key={`todo-${index}`} className={item.completed ? "item completed" : "item"}>
+                <input  type="checkbox" className="todo-checkbox" defaultChecked={item.completed} onChange={this.onChangeBox} />
+                <span>{ item.title } - { item.completed ? "Done" : "Not done" }</span>
+              </div>;
             })}
-          </ul>
+          </div>
           
         </div></>
     );
